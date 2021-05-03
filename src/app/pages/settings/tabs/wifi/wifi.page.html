@@ -1,0 +1,183 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>wifi</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-fab vertical="top" horizontal="end" class="ion-padding">
+    <ion-fab-button>
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+
+    <ion-fab-list side="start">
+      <ion-fab-button color="secondary">
+        <ion-icon name="create"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button color="danger">
+        <ion-icon name="trash"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+
+    <ion-fab-list side="bottom">
+      <ion-fab-button color="success" (click)="addProfile()">
+        <ion-icon name="add"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+
+  </ion-fab>
+
+  <ion-card>
+    <ion-item lines="full">
+      <!-- <ion-icon name="construct-sharp" slot="end" size="large"></ion-icon> -->
+      <ion-icon slot="end" size="large"></ion-icon>
+      <ion-label text-wrap>
+        <h2>Profiles</h2>
+        <p>List of profiles for use in equations of Friis and trilateration technique WiFi</p>
+      </ion-label>
+      <!-- <ion-button fill="outline" slot="end">View</ion-button> -->
+
+    </ion-item>
+
+    <!-- <ion-card-content> -->
+      <ion-radio-group value="" (ionChange)="radioGroupChange($event)" #radio>
+        <ion-item *ngFor="let p of profiles;">
+          <ion-icon name="build-sharp" slot="start" size="small"></ion-icon>
+          <ion-label>{{ p.nome }}</ion-label>
+          <ion-radio slot="end" [value]="p._id"></ion-radio>
+        </ion-item>
+
+        <!-- <ion-item>
+          <ion-icon name="build-sharp" slot="start" size="small"></ion-icon>
+          <ion-label>default 5,0GHz</ion-label>
+          <ion-radio slot="end" value="5.0"></ion-radio>
+        </ion-item> -->
+      </ion-radio-group>
+    <!-- </ion-card-content> -->
+      <!-- <ion-card-content class="ion-padding-top">
+
+      </ion-card-content> -->
+  </ion-card>
+  <!-- <ion-label>{{ radio.value }}</ion-label> -->
+  <!-- <ion-card>
+    <ion-radio-group value="2.4">
+      <ion-item>
+        <ion-icon name="build-sharp" slot="start" size="large"></ion-icon>
+        <ion-label>default 2,4GHz</ion-label>
+        <ion-radio slot="end" value="2.4"></ion-radio>
+      </ion-item>
+
+      <ion-item>
+        <ion-icon name="build-sharp" slot="start" size="large"></ion-icon>
+        <ion-label>default 5,0GHz</ion-label>
+        <ion-radio slot="end" value="5.0"></ion-radio>
+      </ion-item>
+    </ion-radio-group>
+  </ion-card>-->
+
+  <ion-card *ngIf="radio.value != ''">
+    <ion-card-header>
+      <!-- <ion-card-subtitle>Info</ion-card-subtitle> -->
+      <ion-card-title>Info</ion-card-title>
+    </ion-card-header>
+    <div class="img-equation">
+      <img src="./assets/img/equation_v1.svg" alt="Equation friis">
+    </div>
+    <ion-card-content class="ion-no-padding">
+      <form [formGroup]="authForm">
+        <ion-item lines="inset">
+          <ion-label position="floating">Name:</ion-label>
+          <ion-input type="text" formControlName="nome" [disabled]="!fieldsAreEnabled"></ion-input>
+          <ion-note slot="end" color="danger" *ngIf="nome.dirty && nome.hasError('required')">required</ion-note>
+          <ion-note slot="end" color="danger" *ngIf="nome.dirty && nome.hasError('minlength')">min 3 character</ion-note>
+          <ion-note slot="end" color="danger" *ngIf="nome.dirty && nome.hasError('maxlength')">max 20 character</ion-note>
+          <!-- dBm -->
+        </ion-item>
+        <ion-item lines="inset">
+          <ion-label position="floating">Transmit Power (Pt)[dBm]:</ion-label>
+          <ion-input type="number" formControlName="pt" [disabled]="!fieldsAreEnabled"></ion-input>
+          <ion-note slot="end" color="danger" *ngIf="pt.dirty && pt.hasError('required')">required</ion-note>
+          <!-- dBm -->
+        </ion-item>
+        <ion-item lines="inset">
+          <ion-label position="floating">Transmit Gain (Gt)[dBi]:</ion-label>
+          <ion-input type="number" formControlName="gt" [disabled]="!fieldsAreEnabled"></ion-input>
+          <ion-note slot="end" color="danger" *ngIf="gt.dirty && gt.hasError('required')">required</ion-note>
+          <!-- dBi -->
+        </ion-item>
+        <ion-item lines="inset">
+          <ion-label position="floating">Receive Gain (Gr)[dBi]:</ion-label>
+          <ion-input type="number" formControlName="gr" [disabled]="!fieldsAreEnabled"></ion-input>
+          <ion-note slot="end" color="danger" *ngIf="gr.dirty && gr.hasError('required')">required</ion-note>
+          <!-- dBi -->
+        </ion-item>
+        <ion-item lines="inset">
+          <ion-label position="floating">Reference Distance (d0)[m]: </ion-label>
+          <ion-input type="number" formControlName="d0" [disabled]="!fieldsAreEnabled"></ion-input>
+          <ion-note slot="end" color="danger" *ngIf="d0.dirty && d0.hasError('required')">required</ion-note>
+        </ion-item>
+        <ion-item lines="inset">
+          <ion-label position="floating">
+            Beta (&beta;):
+          </ion-label>
+          <ion-input type="number" formControlName="beta" readonly="{{!fieldsAreEnabled}}"></ion-input>
+          <ion-note slot="end" color="danger" *ngIf="beta.dirty && beta.hasError('required')">required</ion-note>
+          <ion-icon name="information-circle-sharp" slot="end" size="small" (click)="infoBeta = !infoBeta" class="ion-padding-top"></ion-icon>
+        </ion-item>
+      </form>
+      <ion-item lines="none" *ngIf="infoBeta">
+        <ion-label>
+          <!-- Range &beta; -->
+          <p>
+          <ion-grid fixed>
+            <ion-row>
+              <ion-col size="9" class="ion-text-center">
+                <ion-text color="dark">
+                  <h2>Ambiente</h2>
+                </ion-text>
+              </ion-col>
+              <ion-col size="3" class="v-border">
+                <ion-text color="dark">
+                  <h2>&beta;</h2>
+                </ion-text>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="9" class="h-border">Espaço Livre</ion-col>
+              <ion-col size="3" class="v-border  h-border">2</ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="9">Rádio-celular em área urbana</ion-col>
+              <ion-col size="3" class="v-border">2,7 a 3,5</ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="9">Rádio-celular urbano sombreado</ion-col>
+              <ion-col size="3" class="v-border">3 a 5</ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="9">Na linha de visão do prédio</ion-col>
+              <ion-col size="3" class="v-border">1,6 a 1,8</ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="9">Obstruído no prédio</ion-col>
+              <ion-col size="3" class="v-border">4 a 6</ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="9">Obstruído em fábricas</ion-col>
+              <ion-col size="3" class="v-border">2 a 3</ion-col>
+            </ion-row>
+          </ion-grid>
+          </p>
+        </ion-label>
+        <!-- <ion-input type="text" readonly value="5"></ion-input> -->
+        <!-- <ion-icon name="information-circle-sharp" slot="start"></ion-icon> -->
+
+      </ion-item>
+      <ion-button *ngIf="fieldsAreEnabled" expand="full" fill="solid" shape="round" color="primary" [disabled]="!authForm.valid">
+        Save
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>
